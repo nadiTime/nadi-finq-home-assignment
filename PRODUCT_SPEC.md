@@ -95,7 +95,8 @@ Reached from Screen 1 or Screen 2. Shows:
 Page-level `dir="rtl"` alone is insufficient, it also reorders flex/grid children, not just text direction. Approach: **[Decision]**
 
 - Static field **labels** (Gender, Name, Address, City, State, Email, Phone, etc.) are hardcoded Hebrew strings, and the form's overall layout is RTL.
-- **Data fields that must stay LTR** — email, phone, street number, the editable Latin name field — get explicit `dir="ltr"` **and** `text-align: left` on the input itself, plus `direction: ltr` on their wrapping row where needed, so the label/input pairing doesn't visually reverse due to the parent's RTL flex flow.
+- **Data fields that must stay LTR** — email, phone, street number — get explicit `dir="ltr"` **and** `text-align: left` on the field itself, plus `direction: ltr` on their wrapping row where needed, so the label/input pairing doesn't visually reverse due to the parent's RTL flex flow.
+- **The editable name field is the exception:** randomuser.me can return non-Latin names (e.g. Arabic-locale data), so it isn't safe to force `dir="ltr"` on it. Its inputs use `dir="auto"` instead, letting the browser infer direction from the actual content (existing value or what's typed), while still sitting in an LTR-ordered `First`/`Last` row so the two inputs don't swap position.
 - **Buttons** (Save/Delete/Update/Back) stay in English, natural left-to-right order — a deliberate exception since they're actions, not RTL-flowing content, not an oversight.
 
 ## 7. Save-state edge case (explicit, not left implicit)

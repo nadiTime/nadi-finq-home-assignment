@@ -91,38 +91,38 @@ function goBack() {
       class="mx-auto h-32 w-32 rounded-full object-cover"
     />
 
-    <div class="flex flex-col gap-1">
+    <div class="flex items-center justify-between gap-3">
       <Label>מגדר</Label>
       <p>{{ profile.gender }}</p>
     </div>
 
-    <div class="flex flex-col gap-1">
+    <div class="flex items-center justify-between gap-3">
       <Label>שם</Label>
       <div class="flex gap-2" dir="ltr">
-        <Input v-model="firstName" class="text-left" style="direction: ltr" placeholder="First" />
-        <Input v-model="lastName" class="text-left" style="direction: ltr" placeholder="Last" />
+        <Input v-model="firstName" dir="auto" class="text-left" placeholder="First" />
+        <Input v-model="lastName" dir="auto" class="text-left" placeholder="Last" />
       </div>
     </div>
 
-    <div class="flex flex-col gap-1">
+    <div class="flex items-center justify-between gap-3">
       <Label>גיל ושנת לידה</Label>
       <p>{{ profile.dob.age }} ({{ profile.dob.year }})</p>
     </div>
 
-    <div class="flex flex-col gap-1">
+    <div class="flex items-start justify-between gap-3">
       <Label>כתובת</Label>
-      <p>
+      <p class="text-right">
         <span dir="ltr" class="text-left">{{ profile.location.streetNumber }}</span>
         {{ profile.location.streetName }}, {{ profile.location.city }}, {{ profile.location.state }}
       </p>
     </div>
 
-    <div class="flex flex-col gap-1">
+    <div class="flex items-center justify-between gap-3">
       <Label>אימייל</Label>
       <p dir="ltr" class="text-left">{{ profile.email }}</p>
     </div>
 
-    <div class="flex flex-col gap-1">
+    <div class="flex items-center justify-between gap-3">
       <Label>טלפון</Label>
       <p dir="ltr" class="text-left">{{ profile.phone }}</p>
     </div>

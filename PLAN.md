@@ -140,11 +140,11 @@ in-screen refetch, and re-litigating it isn't warranted.
     (Save/Update/Delete); use the `Alert` component (instead of plain red text) for Screen 1/2
     fetch-failure states, keeping the inline retry action required by PRODUCT_SPEC §12.
     `feat(client): replace raw error text with toast/alert components`
-34. Screen 3 layout: put each field's label and value on the same row (still RTL-flowing,
-    still LTR-pinned for email/phone/street-number/name per §6) instead of stacked.
-    `style(client): put Profile Detail labels and values on the same row`
-35. Name input direction: switch the editable name inputs from forced `dir="ltr"` to
-    `dir="auto"` so the browser infers direction per actual typed/existing content (needed
-    since randomuser.me can return non-Latin names, e.g. Arabic). Update PRODUCT_SPEC §6's
-    wording, which incorrectly assumed the name field is always Latin script.
-    `fix(client): use dir=auto on name inputs to support non-Latin names`
+34. Screen 3 layout + name field direction, landed together since both touch the same field
+    rows: put each field's label and value on the same row (still RTL-flowing, still
+    LTR-pinned for email/phone/street-number per §6) instead of stacked; and switch the
+    editable name inputs from forced `dir="ltr"` to `dir="auto"` so the browser infers
+    direction per actual typed/existing content (needed since randomuser.me can return
+    non-Latin names, e.g. Arabic). Updates PRODUCT_SPEC §6's wording, which incorrectly
+    assumed the name field is always Latin script.
+    `style(client): same-row label/value layout and dir=auto name inputs on Profile Detail`
