@@ -22,17 +22,47 @@ site downstream: a record without an identity can't be saved, updated, deleted, 
 matched against `savedUsersStore`, so it's not usable regardless. Every other field gets
 a default instead — only `uuid` is load-bearing.
 
+Save also reads whatever is currently typed in the name field, not just the last value
+committed via Update — the alternative (Save only persisting the last Updated name) would
+silently discard an in-progress edit with no error or warning, which is worse than
+requiring Update-first.
+
 ## 2. BiDi approach: labels follow RTL, identifying data stays LTR
 
 Page-level `dir="rtl"` alone reorders flex/grid children, not just text — insufficient on
 its own. Static field **labels** (Gender, Name, Address, etc.) render in Hebrew and follow
-the RTL flow; **data** fields that must stay LTR (email, phone, street number, the
-editable Latin name) get both `dir="ltr"` and explicit `text-align: left`, with
-`direction: ltr` on the wrapping row where needed so the label/input pair doesn't visually
-reverse. Buttons (Save/Delete/Update/Back) stay in English with natural left-to-right
-order — a deliberate exception, since they're actions, not RTL prose.
+the RTL flow; **data** fields that must stay LTR (email, phone, street number) get both
+`dir="ltr"` and explicit `text-align: left`, with `direction: ltr` on the wrapping row
+where needed so the label/input pair doesn't visually reverse. Buttons (Save/Delete/Update/
+Back) stay in English with natural left-to-right order — a deliberate exception, since
+they're actions, not RTL prose.
 
-## 3. Extension: a targeted test over optimistic-update UI
+The editable name field is the one exception to "force LTR": randomuser.me can return
+non-Latin names (e.g. Arabic-locale data), so forcing `dir="ltr"` on it would mis-render a
+non-Latin value. It uses `dir="auto"` instead, letting the browser infer direction from
+the actual content, while still sitting in an LTR-ordered First/Last row so the two inputs
+don't swap position.
+
+## 3. UI library: shadcn-vue over hand-rolled markup or a heavier component library
+
+shadcn-vue components are copied into the repo (not an opaque npm dependency), so every
+primitive is plain, editable Vue + Tailwind — full control to adapt for the BiDi layout
+(Decision 2) without fighting a library's own styling API. It also builds on Radix/Reka,
+so accessible behavior (focus handling, keyboard nav, ARIA attributes on `Select`, etc.)
+comes for free instead of being hand-rolled per input. Tailwind was already the styling
+choice, so it's zero extra runtime cost, unlike pulling in a full component library
+(Vuetify, PrimeVue) for a 4-screen app.
+
+Primitives (`Button`, `Input`, `Select`, `Card`, `Label`, `Alert`, `Sonner`) are used
+wherever one fits; custom markup is limited to layout no primitive covers, e.g. the
+profile row and the label/value row structure on Screen 3.
+
+---
+
+## Extension
+
+Brief calls for one extension beyond the core scope; **chosen: a targeted test over
+optimistic-update UI.**
 
 Optimistic updates need rollback-on-failure and honest user-visible error handling to be
 worth doing — hard to finish correctly in the time budget, and a half-implemented version

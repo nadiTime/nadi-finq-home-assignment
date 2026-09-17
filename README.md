@@ -40,7 +40,6 @@ prints (defaults to `http://localhost:5173`).
 
 ```sh
 cd client && npm test
-cd server && npm test
 ```
 
 ## Other docs
