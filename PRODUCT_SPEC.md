@@ -66,6 +66,7 @@ Two buttons: **Fetch** → Screen 1, **History** → Screen 2. No other logic.
 - **Filter:** two separate inputs, name (text) and country (derived dropdown/select from the fetched set's distinct countries). 
 Client-side, instant (no debounce), there's no network call to throttle; debounce only makes sense to reduce network chatter, which doesn't apply to filtering 10 already-fetched records in memory. **[Decision]**
 - **Filter semantics:** name = case-insensitive substring match against the concatenated "first last"; country = exact match (it's a dropdown, not free text). When both are set, they combine with AND (a row must satisfy both to show).
+- Each filter has its own clear button, shown only once that filter is set: name's clears the text, country's resets the dropdown to "All countries."
 - Clicking a row → Screen 3, resolved from `randomUsersStore`.
 - Rows already saved in this session show a visual "saved" indicator (from `isSaved` flag) — see #7.
 - **Back** button → Screen 0 (§4).
