@@ -84,50 +84,54 @@ function goBack() {
 
 <template>
   <div v-if="!profile" class="p-6 text-sm text-muted-foreground">Profile not found.</div>
-  <div v-else class="mx-auto flex max-w-md flex-col gap-6 p-6" dir="rtl">
-    <img
-      :src="profile.picture.large"
-      alt=""
-      class="mx-auto h-32 w-32 rounded-full object-cover"
-    />
+  <div v-else class="flex flex-col gap-6 p-6">
+    <Button variant="secondary" class="self-start" @click="goBack">Back</Button>
 
-    <div class="flex items-center justify-between gap-3">
-      <Label>מגדר</Label>
-      <p>{{ profile.gender }}</p>
-    </div>
+    <div class="mx-auto flex w-full max-w-md flex-col gap-6" dir="rtl">
+      <img
+        :src="profile.picture.large"
+        alt=""
+        class="mx-auto h-32 w-32 rounded-full object-cover"
+      />
 
-    <div class="flex items-center justify-between gap-3">
-      <Label>שם</Label>
-      <div class="flex gap-2" dir="ltr">
-        <Input v-model="firstName" dir="auto" class="text-left" placeholder="First" />
-        <Input v-model="lastName" dir="auto" class="text-left" placeholder="Last" />
+      <div class="flex items-center justify-between gap-3">
+        <Label>מגדר</Label>
+        <p>{{ profile.gender }}</p>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <Label>שם</Label>
+        <div class="flex gap-2" dir="ltr">
+          <Input v-model="firstName" dir="auto" class="text-left" placeholder="First" />
+          <Input v-model="lastName" dir="auto" class="text-left" placeholder="Last" />
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <Label>גיל ושנת לידה</Label>
+        <p>{{ profile.dob.age }} ({{ profile.dob.year }})</p>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <Label>כתובת</Label>
+        <p class="text-right">
+          <span dir="ltr" class="text-left">{{ profile.location.streetNumber }}</span>
+          {{ profile.location.streetName }}, {{ profile.location.city }}, {{ profile.location.state }}
+        </p>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <Label>אימייל</Label>
+        <p dir="ltr" class="text-left">{{ profile.email }}</p>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <Label>טלפון</Label>
+        <p dir="ltr" class="text-left">{{ profile.phone }}</p>
       </div>
     </div>
 
-    <div class="flex items-center justify-between gap-3">
-      <Label>גיל ושנת לידה</Label>
-      <p>{{ profile.dob.age }} ({{ profile.dob.year }})</p>
-    </div>
-
-    <div class="flex items-start justify-between gap-3">
-      <Label>כתובת</Label>
-      <p class="text-right">
-        <span dir="ltr" class="text-left">{{ profile.location.streetNumber }}</span>
-        {{ profile.location.streetName }}, {{ profile.location.city }}, {{ profile.location.state }}
-      </p>
-    </div>
-
-    <div class="flex items-center justify-between gap-3">
-      <Label>אימייל</Label>
-      <p dir="ltr" class="text-left">{{ profile.email }}</p>
-    </div>
-
-    <div class="flex items-center justify-between gap-3">
-      <Label>טלפון</Label>
-      <p dir="ltr" class="text-left">{{ profile.phone }}</p>
-    </div>
-
-    <div class="flex flex-col gap-2" dir="ltr">
+    <div class="mx-auto flex w-full max-w-md flex-col gap-2" dir="ltr">
       <Button v-if="source === 'random' && !profile.isSaved" :disabled="savePending" @click="onSave">
         {{ savePending ? 'Saving…' : 'Save' }}
       </Button>
@@ -139,8 +143,6 @@ function goBack() {
       <Button v-if="source === 'saved'" :disabled="deletePending" variant="destructive" @click="onDelete">
         {{ deletePending ? 'Deleting…' : 'Delete' }}
       </Button>
-
-      <Button variant="secondary" @click="goBack">Back</Button>
     </div>
   </div>
 </template>
