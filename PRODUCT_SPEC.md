@@ -38,14 +38,21 @@ Each item can carry a local `isSaved: boolean` flag (see #7).
 
 Screen 3 is reached via a route carrying `uuid` + which store to resolve from (not the full serialized object), the actual profile object is read from the relevant store.
 
-## 4. Global navigation
+## 4. Navigation
 
-A persistent, lightweight header/nav bar is present on all screens. This is an addition beyond the brief — which only specifies a per-screen "Back" button — noted here as a deliberate UX improvement, not something the spec implies on its own. **[Decision]**
+No persistent header/nav bar — kept strictly to what the brief specifies: a per-screen
+"Back" button, nothing more. **[Decision]** (An earlier draft added a global nav bar as a UX
+extra; dropped to stay inside the brief's stated scope rather than invite a "why did you add
+this?" question during review.)
 
-- **Content:** app title/logo, acting as a Home link back to Screen 0. 
-- **Behavior:** clicking Home never forces a refetch. Both `randomUsersStore` and `savedUsersStore` keep whatever they already hold (per the "fetch once per session" rule in #3) — returning to Screen 1 via Home shows the same cached list, with filters reset to empty, same as any fresh screen entry.
-- **Screen 3 interaction:** navigating Home from Screen 3 discards any unconfirmed local edit to the name field. No "unsaved changes" confirmation dialog, out of scope for this budget.
-- **Direction:** the nav bar itself stays LTR/English chrome regardless of Screen 3's RTL form requirement (#6) — it's app-level navigation, not the bidirectional content that requirement describes.
+- **Screen 0 (Home):** no Back button, it's the root screen. Fetch → Screen 1, History → Screen 2.
+- **Screen 1 / Screen 2:** a "Back" button returns to Screen 0. It never forces a refetch —
+  both `randomUsersStore` and `savedUsersStore` keep whatever they already hold (per the
+  "fetch once per session" rule in #3 for the random store); returning to Screen 1 shows the
+  same cached list, with filters reset to empty, same as any fresh screen entry.
+- **Screen 3:** "Back" returns to the originating screen (Screen 1 or Screen 2), discarding
+  any unconfirmed local edit to the name field that wasn't submitted via Update. No "unsaved
+  changes" confirmation dialog, out of scope for this budget.
 - **Full page reload (any screen):** resets the SPA to Screen 0. `randomUsersStore` is in-memory only and is lost — any unsaved random batch, and any local edits made to it via Update, are gone. `savedUsersStore` is unaffected since it rehydrates from the backend the next time Screen 2 is visited. This is the general rule Screen 3's "no deep-linking" note (#5) is a special case of.
 
 ## 5. Screens
@@ -61,9 +68,11 @@ Client-side, instant (no debounce), there's no network call to throttle; debounc
 - **Filter semantics:** name = case-insensitive substring match against the concatenated "first last"; country = exact match (it's a dropdown, not free text). When both are set, they combine with AND (a row must satisfy both to show).
 - Clicking a row → Screen 3, resolved from `randomUsersStore`.
 - Rows already saved in this session show a visual "saved" indicator (from `isSaved` flag) — see #7.
+- **Back** button → Screen 0 (§4).
 
 ### Screen 2 — Saved Profiles
 Identical UI/UX to Screen 1 (same row layout, same two-input client-side filter), but the list comes from the backend (`savedUsersStore`, fetched fresh on entry). No server-side filtering — the saved set is small and "identical" reads as UX parity, not implementation parity. **[Decision]**
+- **Back** button → Screen 0 (§4).
 
 ### Screen 3 — Profile Detail
 Reached from Screen 1 or Screen 2. Shows:
@@ -112,7 +121,7 @@ No `GET /api/users/:uuid` (see #5, no deep-linking).
 - No TanStack Query — plain `fetch` + Pinia actions. Would adopt TanStack Query in production for its optimistic-update primitives (`onMutate`/`onError` rollback).
 - No ORM (Prisma) — raw SQL via `better-sqlite3` behind a thin repository layer; would move to Postgres + an ORM at real scale.
 - No server-side filtering on Screen 2.
-- No "unsaved changes" confirmation when navigating Home from Screen 3 (#4).
+- No "unsaved changes" confirmation when navigating Back from Screen 3 (#4).
 - No Delete confirmation dialog,immediate delete on click. In production: a confirm step (dialog or undo-toast) before an irreversible destructive action.
 - No deployment, brief lists it as a plus, not a requirement; not pursued given the time budget.
 

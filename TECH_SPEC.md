@@ -8,6 +8,10 @@ and contracts. Section numbers below cross-reference the product spec section th
 - **Backend:** Node + TypeScript, Express (thin routing only), `better-sqlite3`, `tsx` for dev, Vitest for tests.
 - **Frontend:** Vue 3 (Composition API, `<script setup>`), TypeScript, Vite, Vue Router, Pinia, Tailwind + shadcn-vue, Vitest for unit tests.
 - **Package manager:** npm, one `package.json` per folder (no workspaces) — `client/` and `server/` are independently installable per product spec #1.
+- **UI components:** prefer shadcn-vue primitives over hand-rolled markup wherever one fits
+  (button, input, select, card, label, etc.) — add via `npx shadcn-vue@latest add <name>` as
+  needed rather than writing a plain `<button>`/`<input>` first and refactoring later. Custom
+  markup only where no shadcn-vue primitive covers the need (e.g. the row layout itself).
 
 ## 2. Repo layout
 
@@ -45,7 +49,6 @@ client/
     router/
       index.ts
     components/
-      NavBar.vue
       ProfileRow.vue
       ProfileFilters.vue
       ProfileList.vue           # shared by Screen 1 & 2
