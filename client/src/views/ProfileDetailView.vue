@@ -36,8 +36,10 @@ const deletePending = ref(false)
 async function onSave() {
   if (!profile.value) return
   savePending.value = true
+  const name = { first: firstName.value, last: lastName.value }
   try {
-    await saveUser(profile.value)
+    await saveUser({ ...profile.value, name: { ...profile.value.name, ...name } })
+    randomUsersStore.updateLocalName(profile.value.uuid, name)
     randomUsersStore.markSaved(profile.value.uuid)
   } catch (err) {
     toast.error(err instanceof Error ? err.message : 'Failed to save profile')
