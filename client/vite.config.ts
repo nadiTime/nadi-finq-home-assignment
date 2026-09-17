@@ -11,4 +11,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  server: {
+    proxy: {
+      // Backend PORT (see server/README.md) — keep this in sync if it changes.
+      '/api': 'http://localhost:3000',
+    },
+  },
 })
