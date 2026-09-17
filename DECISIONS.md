@@ -23,12 +23,16 @@ Page-level `dir="rtl"` is not enough by itself: it also reorders flex/grid child
 ## 6. UI: shadcn-vue (Tailwind + Radix/Reka primitives), not a full component library
 Copy-paste ownership over every component (vs. Vuetify/PrimeVue as an opaque dependency) means BiDi handling in Section 5 isn't fighting a library's own RTL assumptions — we own the source. Accepted ~15-20 min upfront setup cost (Tailwind config, CLI init) as worthwhile for the design-taste signal given "no UI design provided."
 
-## 7. Corners cut (deliberate)
+## 7. CORS: Vite dev proxy instead of backend middleware
+`client/vite.config.ts` proxies `/api/*` to the backend, so the browser only ever talks to the Vite origin in dev — no CORS headers on the backend at all, and no risk of a hastily-permissive `cors()` config (an easy smell in a fintech review).
+**Tradeoff:** dev-server-only — a real deployment with client/server on separate hosts would need actual CORS headers or a shared reverse proxy. Acceptable since deployment is out of scope here (see Corners cut).
+
+## 8. Corners cut (deliberate)
 - No `GET /api/users/:uuid` / no deep-linking to Screen 3 — the full profile object is passed via store lookup on navigation, not re-fetched by id. A refresh on Screen 3 loses state. In production: add a detail endpoint + route guard.
 - No client-side mirroring of "saved" status onto random-list items beyond the local `isSaved` flag (see Decision 1) — accepted stale-button edge case within a session.
 - No TanStack Query — plain `fetch` + Pinia actions instead. TanStack Query's optimistic-update primitives (`onMutate`/`onError` rollback) would meaningfully reduce boilerplate in production, but adopting it for two GETs/a POST/a PATCH/a DELETE isn't justified at this scale.
 
-## 8. Extension: tests over optimistic updates
+## 9. Extension: tests over optimistic updates
 Chose a focused test over optimistic-update UI. Optimistic updates need rollback-on-failure and user-visible error handling to be honest about failure states — hard to finish correctly in the ~30min budget, and a half-implemented version (update, no rollback) is worse than none. Target: [TBD — store's save/update/delete provenance logic, the most bug-prone conditional code in the app]. *(Will fill in "what I'd build next" after the extension is implemented.)*
 
 ---
