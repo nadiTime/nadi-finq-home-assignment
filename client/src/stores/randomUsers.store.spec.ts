@@ -38,6 +38,17 @@ describe('randomUsersStore', () => {
     expect(savedStore.profiles).toHaveLength(0)
   })
 
+  it('clearSaved flips isSaved back to false locally', async () => {
+    vi.mocked(fetchRandomUsers).mockResolvedValue([rawPerson('u1', 'Alice')])
+    const store = useRandomUsersStore()
+
+    await store.fetchOnce()
+    store.markSaved('u1')
+    store.clearSaved('u1')
+
+    expect(store.profiles[0]?.isSaved).toBe(false)
+  })
+
   it('updateLocalName mutates the matching profile in place', async () => {
     vi.mocked(fetchRandomUsers).mockResolvedValue([rawPerson('u1', 'Alice')])
     const store = useRandomUsersStore()

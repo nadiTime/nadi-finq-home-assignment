@@ -29,6 +29,10 @@ export const useRandomUsersStore = defineStore('randomUsers', {
       const profile = this.profiles.find((p) => p.uuid === uuid)
       if (profile) profile.isSaved = true
     },
+    clearSaved(uuid: string) {
+      const profile = this.profiles.find((p) => p.uuid === uuid)
+      if (profile) profile.isSaved = false
+    },
     updateLocalName(uuid: string, name: { first: string; last: string }) {
       const profile = this.profiles.find((p) => p.uuid === uuid)
       if (profile) {

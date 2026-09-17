@@ -73,6 +73,7 @@ async function onDelete() {
   deleteError.value = null
   try {
     await savedUsersStore.remove(profile.value.uuid)
+    randomUsersStore.clearSaved(profile.value.uuid)
     goBack()
   } catch (err) {
     deletePending.value = false
