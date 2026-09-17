@@ -137,7 +137,7 @@ function goBack() {
       </div>
 
       <div class="flex flex-col gap-1">
-        <Button :disabled="updatePending" variant="secondary" @click="onUpdate">Update</Button>
+        <Button :disabled="updatePending" variant="outline" @click="onUpdate">Update</Button>
         <p v-if="updateError" class="text-sm text-destructive">{{ updateError }}</p>
       </div>
 
@@ -146,7 +146,7 @@ function goBack() {
         <p v-if="deleteError" class="text-sm text-destructive">{{ deleteError }}</p>
       </div>
 
-      <Button variant="outline" @click="goBack">Back</Button>
+      <Button variant="secondary" @click="goBack">Back</Button>
     </div>
   </div>
 </template>
