@@ -65,10 +65,11 @@ async function onUpdate() {
 
 async function onDelete() {
   if (!profile.value) return
+  const uuid = profile.value.uuid
   deletePending.value = true
   try {
-    await savedUsersStore.remove(profile.value.uuid)
-    randomUsersStore.clearSaved(profile.value.uuid)
+    await savedUsersStore.remove(uuid)
+    randomUsersStore.clearSaved(uuid)
     goBack()
   } catch (err) {
     toast.error(err instanceof Error ? err.message : 'Failed to delete profile')
