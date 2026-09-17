@@ -20,7 +20,6 @@ const routes: RouteRecordRaw[] = [
     path: '/profile/:uuid',
     name: 'profile-detail',
     component: () => import('@/views/ProfileDetailView.vue'),
-    props: (route) => ({ uuid: route.params.uuid, source: route.query.source }),
   },
 ]
 

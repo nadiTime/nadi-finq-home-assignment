@@ -1,6 +1,4 @@
-<script setup lang="ts">
-defineProps<{ uuid: string; source?: string }>()
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div />
