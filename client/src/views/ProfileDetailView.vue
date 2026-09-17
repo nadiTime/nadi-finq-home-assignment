@@ -8,6 +8,7 @@ import { useRandomUsersStore } from '@/stores/randomUsers.store'
 import { useSavedUsersStore } from '@/stores/savedUsers.store'
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 
 const route = useRoute()
 const router = useRouter()
@@ -29,21 +30,17 @@ watch(
 )
 
 const savePending = ref(false)
-const saveError = ref<string | null>(null)
 const updatePending = ref(false)
-const updateError = ref<string | null>(null)
 const deletePending = ref(false)
-const deleteError = ref<string | null>(null)
 
 async function onSave() {
   if (!profile.value) return
   savePending.value = true
-  saveError.value = null
   try {
     await saveUser(profile.value)
     randomUsersStore.markSaved(profile.value.uuid)
   } catch (err) {
-    saveError.value = err instanceof Error ? err.message : 'Failed to save profile'
+    toast.error(err instanceof Error ? err.message : 'Failed to save profile')
   } finally {
     savePending.value = false
   }
@@ -52,7 +49,6 @@ async function onSave() {
 async function onUpdate() {
   if (!profile.value) return
   updatePending.value = true
-  updateError.value = null
   const name = { first: firstName.value, last: lastName.value }
   try {
     if (source.value === 'saved') {
@@ -61,7 +57,7 @@ async function onUpdate() {
       randomUsersStore.updateLocalName(profile.value.uuid, name)
     }
   } catch (err) {
-    updateError.value = err instanceof Error ? err.message : 'Failed to update profile'
+    toast.error(err instanceof Error ? err.message : 'Failed to update profile')
   } finally {
     updatePending.value = false
   }
@@ -70,14 +66,14 @@ async function onUpdate() {
 async function onDelete() {
   if (!profile.value) return
   deletePending.value = true
-  deleteError.value = null
   try {
     await savedUsersStore.remove(profile.value.uuid)
     randomUsersStore.clearSaved(profile.value.uuid)
     goBack()
   } catch (err) {
+    toast.error(err instanceof Error ? err.message : 'Failed to delete profile')
+  } finally {
     deletePending.value = false
-    deleteError.value = err instanceof Error ? err.message : 'Failed to delete profile'
   }
 }
 
@@ -132,24 +128,17 @@ function goBack() {
     </div>
 
     <div class="flex flex-col gap-2" dir="ltr">
-      <div v-if="source === 'random' && !profile.isSaved" class="flex flex-col gap-1">
-        <Button :disabled="savePending" @click="onSave">{{ savePending ? 'Saving…' : 'Save' }}</Button>
-        <p v-if="saveError" class="text-sm text-destructive">{{ saveError }}</p>
-      </div>
+      <Button v-if="source === 'random' && !profile.isSaved" :disabled="savePending" @click="onSave">
+        {{ savePending ? 'Saving…' : 'Save' }}
+      </Button>
 
-      <div class="flex flex-col gap-1">
-        <Button :disabled="updatePending" variant="outline" @click="onUpdate">
-          {{ updatePending ? 'Updating…' : 'Update' }}
-        </Button>
-        <p v-if="updateError" class="text-sm text-destructive">{{ updateError }}</p>
-      </div>
+      <Button :disabled="updatePending" variant="outline" @click="onUpdate">
+        {{ updatePending ? 'Updating…' : 'Update' }}
+      </Button>
 
-      <div v-if="source === 'saved'" class="flex flex-col gap-1">
-        <Button :disabled="deletePending" variant="destructive" @click="onDelete">
-          {{ deletePending ? 'Deleting…' : 'Delete' }}
-        </Button>
-        <p v-if="deleteError" class="text-sm text-destructive">{{ deleteError }}</p>
-      </div>
+      <Button v-if="source === 'saved'" :disabled="deletePending" variant="destructive" @click="onDelete">
+        {{ deletePending ? 'Deleting…' : 'Delete' }}
+      </Button>
 
       <Button variant="secondary" @click="goBack">Back</Button>
     </div>
