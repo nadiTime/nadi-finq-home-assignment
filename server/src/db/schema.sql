@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS users (
+  uuid TEXT PRIMARY KEY,
+  data TEXT NOT NULL
+);
