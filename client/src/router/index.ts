@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createMemoryHistory, createRouter, type RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -23,7 +23,9 @@ const routes: RouteRecordRaw[] = [
   },
 ]
 
+// In-memory history (not the URL bar): a full page reload always resets the SPA to
+// Screen 0 (product spec #4), and Screen 3 is never directly navigable via URL (#5).
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createMemoryHistory(),
   routes,
 })
