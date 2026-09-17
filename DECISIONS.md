@@ -27,6 +27,18 @@ Copy-paste ownership over every component (vs. Vuetify/PrimeVue as an opaque dep
 `client/vite.config.ts` proxies `/api/*` to the backend, so the browser only ever talks to the Vite origin in dev — no CORS headers on the backend at all, and no risk of a hastily-permissive `cors()` config (an easy smell in a fintech review).
 **Tradeoff:** dev-server-only — a real deployment with client/server on separate hosts would need actual CORS headers or a shared reverse proxy. Acceptable since deployment is out of scope here (see Corners cut).
 
+## 7a. Data normalization: drop randomuser.me records without a `uuid`
+`login.uuid` is the canonical identity key end-to-end (Decision 1) — a record missing it
+can't be saved, can't be the target of Update/Delete, and can't be matched against
+`savedUsersStore`. Rather than defend against a missing uuid at every call site, a single
+`normalizeProfile()` step runs right after the randomuser.me fetch and silently drops any
+record without one; every other field is defaulted rather than treated as fatal, since only
+`uuid` is load-bearing for identity. This keeps `randomUsersStore` invariant (every item has
+a valid uuid) so no downstream code needs a null-check for it.
+**Tradeoff accepted:** if randomuser.me ever returns a malformed record, the batch silently
+shows fewer than 10 rows with no user-facing notice. Acceptable given how rare and out of the
+user's control this is; a production version might surface a toast ("N profiles skipped").
+
 ## 8. Corners cut (deliberate)
 - No `GET /api/users/:uuid` / no deep-linking to Screen 3 — the full profile object is passed via store lookup on navigation, not re-fetched by id. A refresh on Screen 3 loses state. In production: add a detail endpoint + route guard.
 - No client-side mirroring of "saved" status onto random-list items beyond the local `isSaved` flag (see Decision 1) — accepted stale-button edge case within a session.
