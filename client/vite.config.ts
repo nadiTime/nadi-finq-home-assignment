@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,5 +16,8 @@ export default defineConfig({
       // Backend PORT (see server/README.md) — keep this in sync if it changes.
       '/api': 'http://localhost:3000',
     },
+  },
+  test: {
+    environment: 'node',
   },
 })
