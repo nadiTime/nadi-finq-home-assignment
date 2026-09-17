@@ -5,7 +5,7 @@ and contracts. Section numbers below cross-reference the product spec section th
 
 ## 1. Stack & tooling
 
-- **Backend:** Node + TypeScript, Express (thin routing only), `better-sqlite3`, `tsx` for dev, Vitest for tests.
+- **Backend:** Node + TypeScript, Express (thin routing only), `better-sqlite3`, `zod` for request-body validation, `tsx` for dev, Vitest for tests.
 - **Frontend:** Vue 3 (Composition API, `<script setup>`), TypeScript, Vite, Vue Router, Pinia, Tailwind + shadcn-vue, Vitest for unit tests.
 - **Package manager:** npm, one `package.json` per folder (no workspaces) — `client/` and `server/` are independently installable per product spec #1.
 - **UI components:** prefer shadcn-vue primitives over hand-rolled markup wherever one fits
@@ -200,9 +200,13 @@ real indexed primary key for the four endpoints' lookups.
 | DELETE | `/api/users/:uuid` | — | `204` | `404` unknown uuid |
 
 ### Validation (`validation/users.schema.ts`)
-Hand-written shape checks (no zod/schema-lib dependency, matching "thin but proper" bar,
-product spec #8): `uuid` is a non-empty string, `name.first`/`name.last` non-empty strings.
-Returns `{ ok: true, data }` or `{ ok: false, errors: string[] }`; routes map failure to `400`.
+`zod` schemas validate the full request body against the `Profile` shape (POST) or
+`{ name: { first, last } }` (PATCH) — a superset of product spec #8's original "uuid
+non-empty, name non-empty" bar, adopted because a hand-rolled type guard for every field
+of `Profile` couldn't avoid an `as Profile` cast between the parsed body and the repository
+type, whereas `z.ZodType<Profile>` cross-checks the schema against `Profile` at compile
+time with no cast at all. Returns `{ ok: true, data }` or `{ ok: false, errors: string[] }`
+(errors are the zod issues' messages); routes map failure to `400`.
 
 ## 7. Cross-cutting (product spec #13)
 

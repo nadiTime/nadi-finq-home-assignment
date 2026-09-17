@@ -1,59 +1,64 @@
+import { z } from 'zod'
 import type { Profile } from '../db/users.repository.js'
 
 export type ValidationResult<T> = { ok: true; data: T } | { ok: false; errors: string[] }
 
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === 'string' && value.length > 0
-}
+const nameSchema = z.object({
+  first: z.string().min(1, 'name.first is required and must be a non-empty string'),
+  last: z.string().min(1, 'name.last is required and must be a non-empty string'),
+})
 
-export function validateCreateUser(body: unknown): ValidationResult<Profile> {
-  const errors: string[] = []
+// `z.ZodType<Profile>` cross-checks this schema's output against `Profile` at compile time,
+// so there's no cast between the parsed value and the repository type.
+const profileSchema: z.ZodType<Profile> = z.object({
+  uuid: z.string().min(1, 'uuid is required and must be a non-empty string'),
+  picture: z.object({
+    thumbnail: z.string(),
+    large: z.string(),
+  }),
+  name: z.object({
+    title: z.string(),
+    first: nameSchema.shape.first,
+    last: nameSchema.shape.last,
+  }),
+  gender: z.string(),
+  location: z.object({
+    country: z.string(),
+    city: z.string(),
+    state: z.string(),
+    streetNumber: z.number(),
+    streetName: z.string(),
+  }),
+  email: z.string(),
+  phone: z.string(),
+  dob: z.object({
+    age: z.number(),
+    year: z.number(),
+  }),
+})
 
-  if (typeof body !== 'object' || body === null) {
-    return { ok: false, errors: ['body must be an object'] }
-  }
-
-  const candidate = body as Record<string, unknown>
-
-  if (!isNonEmptyString(candidate.uuid)) {
-    errors.push('uuid is required and must be a non-empty string')
-  }
-
-  const name = candidate.name as Record<string, unknown> | undefined
-  if (typeof name !== 'object' || name === null) {
-    errors.push('name is required and must be an object')
-  } else {
-    if (!isNonEmptyString(name.first)) errors.push('name.first is required and must be a non-empty string')
-    if (!isNonEmptyString(name.last)) errors.push('name.last is required and must be a non-empty string')
-  }
-
-  if (errors.length > 0) return { ok: false, errors }
-
-  return { ok: true, data: candidate as unknown as Profile }
+export interface NameInput {
+  first: string
+  last: string
 }
 
 export interface UpdateNameBody {
-  name: { first: string; last: string }
+  name: NameInput
+}
+
+const updateNameSchema: z.ZodType<UpdateNameBody> = z.object({
+  name: nameSchema,
+})
+
+function toValidationResult<T>(result: z.ZodSafeParseResult<T>): ValidationResult<T> {
+  if (result.success) return { ok: true, data: result.data }
+  return { ok: false, errors: result.error.issues.map((issue: z.core.$ZodIssue) => issue.message) }
+}
+
+export function validateCreateUser(body: unknown): ValidationResult<Profile> {
+  return toValidationResult(profileSchema.safeParse(body))
 }
 
 export function validateUpdateName(body: unknown): ValidationResult<UpdateNameBody> {
-  const errors: string[] = []
-
-  if (typeof body !== 'object' || body === null) {
-    return { ok: false, errors: ['body must be an object'] }
-  }
-
-  const candidate = body as Record<string, unknown>
-  const name = candidate.name as Record<string, unknown> | undefined
-
-  if (typeof name !== 'object' || name === null) {
-    errors.push('name is required and must be an object')
-  } else {
-    if (!isNonEmptyString(name.first)) errors.push('name.first is required and must be a non-empty string')
-    if (!isNonEmptyString(name.last)) errors.push('name.last is required and must be a non-empty string')
-  }
-
-  if (errors.length > 0) return { ok: false, errors }
-
-  return { ok: true, data: { name: { first: name!.first as string, last: name!.last as string } } }
+  return toValidationResult(updateNameSchema.safeParse(body))
 }

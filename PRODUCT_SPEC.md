@@ -114,7 +114,7 @@ Backend `POST /api/users` performs an upsert on `uuid` conflict as defense-in-de
 
 No `GET /api/users/:uuid` (see #5, no deep-linking).
 
-**Validation:** `POST`/`PATCH` bodies are checked for the required shape (uuid present, name non-empty) and rejected with `400` on failure — matching the brief's "thin but proper" bar even at 3-4 endpoints, not full schema validation.
+**Validation:** `POST`/`PATCH` bodies are validated against the full `Profile` shape (`POST`) or the name payload (`PATCH`) via `zod`, and rejected with `400` on failure — see `TECH_SPEC.md` §6 for why this went beyond the originally-scoped "uuid present, name non-empty" check.
 
 ## 9. Deliberately cut corners (to restate in DECISIONS.md, ≤1 page)
 
