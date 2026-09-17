@@ -17,29 +17,29 @@ export interface Profile {
   dob: { age: number; year: number }
 }
 
-const listStmt = db.prepare<[], { uuid: string; data: string }>('SELECT uuid, data FROM users')
-const upsertStmt = db.prepare<{ uuid: string; data: string }>(
+const listUsersStmt = db.prepare<[], { uuid: string; data: string }>('SELECT uuid, data FROM users')
+const upsertUserStmt = db.prepare<{ uuid: string; data: string }>(
   'INSERT INTO users (uuid, data) VALUES (:uuid, :data) ON CONFLICT(uuid) DO UPDATE SET data = :data',
 )
-const getStmt = db.prepare<[string], { uuid: string; data: string }>(
+const getUserStmt = db.prepare<[string], { uuid: string; data: string }>(
   'SELECT uuid, data FROM users WHERE uuid = ?',
 )
-const deleteStmt = db.prepare<[string]>('DELETE FROM users WHERE uuid = ?')
+const deleteUserStmt = db.prepare<[string]>('DELETE FROM users WHERE uuid = ?')
 
 function parseRow(row: { uuid: string; data: string }): Profile {
   return JSON.parse(row.data) as Profile
 }
 
 export function listUsers(): Profile[] {
-  return listStmt.all().map(parseRow)
+  return listUsersStmt.all().map(parseRow)
 }
 
 export function upsertUser(profile: Profile): void {
-  upsertStmt.run({ uuid: profile.uuid, data: JSON.stringify(profile) })
+  upsertUserStmt.run({ uuid: profile.uuid, data: JSON.stringify(profile) })
 }
 
 export function updateUserName(uuid: string, name: { first: string; last: string }): Profile | null {
-  const row = getStmt.get(uuid)
+  const row = getUserStmt.get(uuid)
   if (!row) return null
   const profile = parseRow(row)
   profile.name.first = name.first
@@ -49,6 +49,6 @@ export function updateUserName(uuid: string, name: { first: string; last: string
 }
 
 export function deleteUser(uuid: string): boolean {
-  const result = deleteStmt.run(uuid)
+  const result = deleteUserStmt.run(uuid)
   return result.changes > 0
 }
