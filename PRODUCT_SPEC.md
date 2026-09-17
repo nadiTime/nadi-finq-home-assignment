@@ -126,6 +126,7 @@ No `GET /api/users/:uuid` (see #5, no deep-linking).
 - No "unsaved changes" confirmation when navigating Back from Screen 3 (#4).
 - No Delete confirmation dialog,immediate delete on click. In production: a confirm step (dialog or undo-toast) before an irreversible destructive action.
 - No deployment, brief lists it as a plus, not a requirement; not pursued given the time budget.
+- Saved list (Screen 2) renders the full result set with a plain `v-for`, no pagination or virtualization. Fine at the brief's scale; at real scale would add either server-side pagination or viewport-based virtualization (e.g. only rendering rows currently in view) to avoid mounting every row up front.
 
 ## 10. Extension (~30 min budget)
 
