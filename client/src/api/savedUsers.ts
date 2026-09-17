@@ -1,6 +1,11 @@
 import type { Profile } from '@/types/profile'
 
-async function handle<T>(response: Response): Promise<T> {
+/**
+ * Handles the response from the API and returns the parsed body.
+ * @param response - The response from the API.
+ * @returns The parsed body.
+ */
+async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const body = await response.json().catch(() => null)
     const message = body?.errors?.join(', ') ?? `request failed with status ${response.status}`
@@ -12,7 +17,7 @@ async function handle<T>(response: Response): Promise<T> {
 
 export async function fetchSavedUsers(): Promise<Profile[]> {
   const response = await fetch('/api/users')
-  return handle<Profile[]>(response)
+  return handleResponse<Profile[]>(response)
 }
 
 export async function saveUser(profile: Profile): Promise<Profile> {
@@ -22,7 +27,7 @@ export async function saveUser(profile: Profile): Promise<Profile> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
-  return handle<Profile>(response)
+  return handleResponse<Profile>(response)
 }
 
 export async function updateSavedUserName(
@@ -34,10 +39,10 @@ export async function updateSavedUserName(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name }),
   })
-  return handle<Profile>(response)
+  return handleResponse<Profile>(response)
 }
 
 export async function deleteSavedUser(uuid: string): Promise<void> {
   const response = await fetch(`/api/users/${uuid}`, { method: 'DELETE' })
-  return handle<void>(response)
+  return handleResponse<void>(response)
 }
