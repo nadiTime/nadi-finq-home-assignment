@@ -1,4 +1,4 @@
-# finQ Home Assignment — Random User Profiles
+# finQ Home Assignment — Random User Profiles - Nadi Cohen
 
 A small full-stack app: fetch random profiles from randomuser.me, browse/filter them,
 save selected ones to a backend, and edit or delete saved profiles.
@@ -46,3 +46,8 @@ cd client && npm test
 
 - `DECISIONS.md` — key design decisions and tradeoffs.
 - `AI_USAGE.md` — which AI tools were used during this assignment and for what.
+
+## Appendix
+
+- `PRODUCT_SPEC.md` — product spec.
+- `TECH_SPEC.md` — tech spec.
