@@ -105,8 +105,8 @@ function goBack() {
       <div class="flex items-center justify-between gap-3">
         <Label>שם</Label>
         <div class="flex gap-2" dir="ltr">
-          <Input v-model="firstName" dir="auto" class="text-left" placeholder="First" />
-          <Input v-model="lastName" dir="auto" class="text-left" placeholder="Last" />
+          <Input v-model="firstName" dir="auto" placeholder="First" />
+          <Input v-model="lastName" dir="auto" placeholder="Last" />
         </div>
       </div>
 
