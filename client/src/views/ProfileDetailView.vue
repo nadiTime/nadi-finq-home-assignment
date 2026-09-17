@@ -132,17 +132,21 @@ function goBack() {
 
     <div class="flex flex-col gap-2" dir="ltr">
       <div v-if="source === 'random' && !profile.isSaved" class="flex flex-col gap-1">
-        <Button :disabled="savePending" @click="onSave">Save</Button>
+        <Button :disabled="savePending" @click="onSave">{{ savePending ? 'Saving…' : 'Save' }}</Button>
         <p v-if="saveError" class="text-sm text-destructive">{{ saveError }}</p>
       </div>
 
       <div class="flex flex-col gap-1">
-        <Button :disabled="updatePending" variant="outline" @click="onUpdate">Update</Button>
+        <Button :disabled="updatePending" variant="outline" @click="onUpdate">
+          {{ updatePending ? 'Updating…' : 'Update' }}
+        </Button>
         <p v-if="updateError" class="text-sm text-destructive">{{ updateError }}</p>
       </div>
 
       <div v-if="source === 'saved'" class="flex flex-col gap-1">
-        <Button :disabled="deletePending" variant="destructive" @click="onDelete">Delete</Button>
+        <Button :disabled="deletePending" variant="destructive" @click="onDelete">
+          {{ deletePending ? 'Deleting…' : 'Delete' }}
+        </Button>
         <p v-if="deleteError" class="text-sm text-destructive">{{ deleteError }}</p>
       </div>
 
